@@ -5,8 +5,8 @@ import java.util.*
 
 class FoodDeliverySystem {
     private val menu = mutableMapOf<String, Triple<String, Double, Int>>() // itemId -> (name, price, inventory)
-    val orders = mutableMapOf<String, MutableMap<String, Any>>() // orderId -> { details }
-    val userBalances = mutableMapOf<String, Double>() // userId -> balance
+    private val orders = mutableMapOf<String, MutableMap<String, Any>>() // orderId -> { details }
+    private val userBalances = mutableMapOf<String, Double>() // userId -> balance
     private val riders = mutableListOf<String>() // List of available riders
 
     // Menu Operations
