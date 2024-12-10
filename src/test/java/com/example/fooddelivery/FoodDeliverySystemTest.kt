@@ -1,9 +1,12 @@
+import com.example.fooddelivery.FoodDeliverySystem
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 
 class FoodDeliverySystemTest {
     private lateinit var system: FoodDeliverySystem
 
-    @BeforeTest
+    @BeforeEach
     fun setup() {
         system = FoodDeliverySystem()
     }
