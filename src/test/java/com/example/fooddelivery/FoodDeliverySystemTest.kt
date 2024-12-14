@@ -1,4 +1,7 @@
 import com.example.fooddelivery.FoodDeliverySystem
+import com.example.fooddelivery.MenuService
+import com.example.fooddelivery.OrderService
+import com.example.fooddelivery.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.*
@@ -8,7 +11,7 @@ class FoodDeliverySystemTest {
 
     @BeforeEach
     fun setup() {
-        system = FoodDeliverySystem()
+        system = FoodDeliverySystem(UserService(), OrderService(), MenuService())
     }
 
     @Test
@@ -36,7 +39,7 @@ class FoodDeliverySystemTest {
     @Test
     fun testCreateOrderSuccess() {
         system.addMenuItem("item1", "Burger", 5.99, 10)
-        system.addUser("user1", 20.0)
+        system.userService.addUser("user1", 20.0)
         system.addRider("rider1")
 
         val orderId = system.createOrder("user1", listOf("item1"), null)

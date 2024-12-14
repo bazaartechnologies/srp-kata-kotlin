@@ -3,7 +3,11 @@ package com.example.fooddelivery;
 import java.util.*
 
 
-class FoodDeliverySystem {
+class FoodDeliverySystem(
+    val userService: UserService,
+    val orderService: OrderService,
+    val menuService: MenuService
+) {
     private val menu = mutableMapOf<String, Triple<String, Double, Int>>() // itemId -> (name, price, inventory)
     private val orders = mutableMapOf<String, MutableMap<String, Any>>() // orderId -> { details }
     private val userBalances = mutableMapOf<String, Double>() // userId -> balance
@@ -11,7 +15,8 @@ class FoodDeliverySystem {
 
     // Menu Operations
     fun addMenuItem(itemId: String, name: String, price: Double, inventory: Int) {
-        menu[itemId] = Triple(name, price, inventory)
+//        menu[itemId] = Triple(name, price, inventory)
+        menuService.addMenuItem(itemId, name, price, inventory)
     }
 
     fun removeMenuItem(itemId: String) {
@@ -29,17 +34,21 @@ class FoodDeliverySystem {
 
     // Order Operations
     fun createOrder(userId: String, itemIds: List<String>, discountCode: String?): String {
-        if (!userBalances.containsKey(userId)) throw RuntimeException("User not found.")
-        if (itemIds.isEmpty()) throw RuntimeException("Order must have at least one item.")
+//        if (!userBalances.containsKey(userId)) throw RuntimeException("User not found.")
+        userService.validateUserBalance(userId)
+
+//        if (itemIds.isEmpty()) throw RuntimeException("Order must have at least one item.")
+        orderService.checkOrderItems(itemIds)
+
 
         var total = 0.0
-        val itemsWithInsufficientInventory = mutableListOf<String>()
 
         for (itemId in itemIds) {
-            val item = menu[itemId] ?: throw RuntimeException("Menu item $itemId not found.")
-            if (item.third <= 0) {
-                itemsWithInsufficientInventory.add(itemId)
-            }
+//            val item = menu[itemId] ?: throw RuntimeException("Menu item $itemId not found.")
+            val item = menuService.validateMenuItem(itemId)
+//            if (item.third <= 0) {
+//                itemsWithInsufficientInventory.add(itemId)
+//            }
             total += item.second
         }
 
@@ -52,12 +61,13 @@ class FoodDeliverySystem {
         total -= discount
 
         // Check user balance
-        if (userBalances[userId]!! < total) throw RuntimeException("Insufficient balance.")
+//        if (userBalances[userId]!! < total) throw RuntimeException("Insufficient balance.")
+        userService.checkUserBalance(userId, total)
 
         // Deplete inventory
         itemIds.forEach { itemId ->
-                val item = menu[itemId]!!
-                menu[itemId] = Triple(item.first, item.second, item.third - 1)
+                //menu[itemId] = Triple(item.first, item.second, item.third - 1)
+                menuService.depleteMenuItem(itemId)
         }
 
         // Assign a rider
